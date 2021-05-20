@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace NewFunctionBuilder.Logic
@@ -9,7 +10,7 @@ namespace NewFunctionBuilder.Logic
         public object[] Parse(string text)
         {
             List<object> expression = ParseExpression(text);
-            List<object> tokens = ToRPN(expression);
+            Queue<object> tokens = ToRPN(expression);
 
             return tokens.ToArray();
         }
@@ -17,61 +18,67 @@ namespace NewFunctionBuilder.Logic
         private List<object> ParseExpression(string text) //выражение в лист объектов
         {
             text = text.Replace(" ", "");
-            List<object> expression = new List<object>();
+            var expression = new List<object>();
 
             for (int i = 0; i < text.Length; i++)
             {
-                if (CheckNumber(text[i].ToString()) || ((text[i] == '-' || text[i] == '+') && !CheckNumber(text[i - 1].ToString()) && text[i - 1] != ')')) //Если число
+                //число
+                if (CheckNumber(text[i].ToString()) || ((text[i] == '-' || text[i] == '+')
+                    && !CheckNumber(text[i - 1].ToString()) && text[i - 1] != ')'))
                     expression.Add(ReadNumber(text, ref i));
+                //скобка
                 else if (text[i].ToString() == "(" || text[i].ToString() == ")")
                     expression.Add(text[i].ToString());
+                //операция
                 else
-                {
                     expression.Add(ReadOperation(text, ref i));
-                }
             }
-            return expression;
 
+            return expression;
         }
+
+        static bool CheckNumber(string text) //Проверка на число/переменную
+        {
+            if (double.TryParse(text.ToString(), out _) || text == "x")
+                return true;
+
+            return false;
+        }
+
         static object ReadNumber(string text, ref int i)
         {
             if (text[i] == 'x')
                 return "x";
             else
             {
-                StringBuilder num = new StringBuilder().Append(text[i]);
+                var num = new StringBuilder().Append(text[i]);
                 while (CheckNumber(text[i + 1].ToString()) || text[i + 1] == ',')
                 {
                     i++;
                     num.Append(text[i]);
                 }
+
                 return double.Parse(num.ToString());
             }
         }
 
         static Operations ReadOperation(string text, ref int i)
         {
-            StringBuilder str = new StringBuilder().Append(text[i]);
-            while (!CheckNumber(text[i + 1].ToString()) && text[i + 1] != '(' && text[i + 1] != ')')
+            var str = new StringBuilder().Append(text[i]);
+
+            while (i < text.Length && !CheckNumber(text[i].ToString()) // не дойдем до конца строки
+                && text[i] != '(' && text[i] != ')') //пока не встретим цифру или скобку
             {
-                if ("+-*/".Contains(text[i]))
-                    break;
-                i++;
-                str.Append(text[i]);
+                str.Append(text[i++]);
             }
+
             return ChooseOperation(str.ToString());
         }
 
-        static bool CheckNumber(string text) //Проверка на число
-        {
-            if (double.TryParse(text.ToString(), out _) || text == "x")
-                return true;
-            return false;
-        }
-
-        static public Operations ChooseOperation(object op)
+        static public Operations ChooseOperation(string op)
         {
             Operations operation = null;
+
             switch (op.ToString())
             {
                 case ("+"):
@@ -86,50 +93,85 @@ namespace NewFunctionBuilder.Logic
                 case ("/"):
                     operation = new Devide();
                     break;
+                default:
+                    throw new Exception("Неизвестная операция");
+
             }
+
             return operation;
         }
 
-        private List<object> ToRPN(List<object> expression)
+        private Queue<object> ToRPN(List<object> expression)
         {
-            List<object> operands = new List<object>();
-            List<object> operations = new List<object>();
+            var operations = new Stack<object>();
+            //.Push() Вставляет элемент в верх Stack(помещаем в стек)
+            //.Pop() Удаляет элемент из верхней части Stack
+            //.Peek() Возвращает элемент, расположенный в верхней части Stack, но не удаляет его
+            var operands = new Queue<object>();
+            //.Enqueue() Добавляет элемент в конец Queue
+            //.Dequeue() удаляет самый старый элемент из начала Queue
+            //.Peek() Возвращает самый старый элемент, находящийся в начале Queue, но не удаляет его
 
             for (int i = 0; i < expression.Count; i++)
             {
-                object token = expression[i];
-                if (CheckNumber(token.ToString()))
+                var token = expression[i];
+
+                if (CheckNumber(token.ToString())) //Если число/переменная, помещаем в очередь
                 {
-                    operands.Add(token);
+                    operands.Enqueue(token);
                 }
 
-                /*else if (token is Parenthessis parenthessis && parenthessis.IsOpening)
+                else
                 {
-                    operations.Add(parenthessis);
-                }
-                else if (token is Parenthessis parenthessis2 && !parenthessis2.IsOpening)
-                {
-
-                }*/
-
-                else if (token is Operations op)
-                {
-                    if (operations.Count != 0 && ((op.Priority) < ((Operations)operations[operations.Count - 1]).Priority))
+                    //Если '(', или стек пуст, или символы в нем имеют приоритет < приоритета token, то помещаем token в стек
+                    if (operations.Count() == 0 || token.ToString() == "(" || GetPriority(operations.Peek()) < GetPriority(token))
                     {
-                        operands.Add(operations[operations.Count - 1]);
-                        operations.RemoveAt(operations.Count - 1);
+                        operations.Push(token);
                     }
 
-                    operations.Add(op);
-                }
+                    //Если приоритет token <= приоритета символа на вершине стека,
+                    //то извлекаем символы из стека в очередь, пока выполняется условие и помещаем token в стек
+                    else if (token.ToString() != ")")
+                    {
+                        while (operations.Count() != 0 && GetPriority(token) <= GetPriority(operations.Peek()))
+                        {
+                            operands.Enqueue(operations.Pop());
+                        }
+                        operations.Push(token);
+                    }
+
+                    //Если ')', то извлекаем символы из стека в очередь,
+                    //пока не встретим в стеке '(', которую уничтожаем, как и ')'
+                    else
+                    {
+                        while (operations.Peek().ToString() != "(")
+                        {
+                            operands.Enqueue(operations.Pop());
+                        }
+                        operations.Pop();
+                    }
+                }  
             }
 
-            for (int i = operations.Count - 1; i >= 0; i--)
+            //if вся строка разобрана, а в стеке есть операции, извлекаем их из стека в очередь
+            while (operations.Count() != 0)
             {
-                operands.Add(operations[i]);
+                operands.Enqueue(operations.Pop());
             }
 
             return operands;
+        }
+
+        private int GetPriority(object token)
+        {
+            string symbol = token.ToString();
+
+            if (symbol == "*" || symbol == "/")
+                return 3;
+            else if (symbol == "+" || symbol == " - ")
+                return 2;
+            else
+                return 1;
         }
     }
 }

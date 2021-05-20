@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace NewFunctionBuilder.Logic
 {
@@ -13,7 +12,7 @@ namespace NewFunctionBuilder.Logic
         public abstract double Evaluate(List<object> values);
     }
 
-    public class Parenthessis //скобки
+    /*public class Parenthessis //скобки
     {
         public bool IsOpening { get; }
 
@@ -22,16 +21,16 @@ namespace NewFunctionBuilder.Logic
             IsOpening = parenthesis == '(';
         }
 
-        /*public override string ToString()
+        public override string ToString()
         {
             return IsOpening ? "(" : ")";
-        }*/
-    }
+        }
+    }*/
 
     public class Plus : Operations
     {
         public override string Name => "+";
-        public override int Priority => 1;
+        public override int Priority => 2;
         public override int OperandCount => 2;
 
         public override double Evaluate(List<object> values) //оценка
@@ -45,7 +44,7 @@ namespace NewFunctionBuilder.Logic
     public class Minus : Operations
     {
         public override string Name => "-";
-        public override int Priority => 1;
+        public override int Priority => 2;
         public override int OperandCount => 2;
 
         public override double Evaluate(List<object> values)
@@ -59,7 +58,7 @@ namespace NewFunctionBuilder.Logic
     public class Multiply : Operations //умножение
     {
         public override string Name => "*";
-        public override int Priority => 2;
+        public override int Priority => 3;
         public override int OperandCount => 2;
 
         public override double Evaluate(List<object> values)
@@ -73,7 +72,7 @@ namespace NewFunctionBuilder.Logic
     public class Devide : Operations //деление
     {
         public override string Name => "/";
-        public override int Priority => 2;
+        public override int Priority => 3;
         public override int OperandCount => 2;
 
         public override double Evaluate(List<object> values)
