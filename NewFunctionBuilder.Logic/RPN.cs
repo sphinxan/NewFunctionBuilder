@@ -1,20 +1,107 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace NewFunctionBuilder.Logic
 {
     public class RPN
     {
-        public object[] Parse(string text)
-        {
-            List<object> expression = ParseExpression(text);
-            Queue<object> tokens = ToRPN(expression);
-
-            return tokens.ToArray();
+        public char[] Parse(string text)                                                                //Stack.Push() Вставляет элемент в верх Stack(помещаем в стек)
+        {                                                                                               //Stack.Pop() Удаляет элемент из верхней части Stack
+            char[] expression = ParseExpression(text);                                                  //Stack.Peek() Возвращает элемент, расположенный в верхней части Stack, но не удаляет его                                         
+            Queue<char> tokens = ToRPN(expression);                                                     //Queue.Enqueue() Добавляет элемент в конец Queue
+            var elements = tokens.ToArray();                                                            //Queue.Dequeue() удаляет самый старый элемент из начала Queue
+                                                                                                        //Queue.Peek() Возвращает самый старый элемент, находящийся в начале Queue, но не удаляет его
+            return elements;
         }
 
+        private char[] ParseExpression(string text)
+        {
+            text = text.Replace(" ", "");
+            return text.ToArray();
+        }
+
+        private Queue<char> ToRPN(char[] expression)
+        {
+            var operations = new Stack<char>();
+            var operands = new Queue<char>();
+
+            for (int i = 0; i < expression.Length; i++)
+            {
+                var token = expression[i];
+
+                if (CheckNumber(token.ToString())) //Если число/переменная, помещаем в очередь
+                {
+                    operands.Enqueue(token);
+                }
+
+                else
+                {
+                    //Если '(', или стек пуст, или приоритет символов < приоритета token, то помещаем token в стек
+                    if (operations.Count() == 0 || token.ToString() == "(" || GetPriority(operations.Peek()) < GetPriority(token))
+                    {
+                        operations.Push(token);
+                    }
+
+                    //Если приоритет token <= приоритета символа на вершине стека,
+                    //то извлекаем символы из стека в очередь, пока выполняется условие и помещаем token в стек
+                    else if (token.ToString() != ")")
+                    {
+                        while (operations.Count() != 0 && GetPriority(token) <= GetPriority(operations.Peek()))
+                        {
+                            operands.Enqueue(operations.Pop());
+                        }
+                        operations.Push(token);
+                    }
+
+                    //Если ')', то извлекаем символы из стека в очередь,
+                    //пока не встретим в стеке '(', которую удаляем, как и ')'
+                    else
+                    {
+                        while (operations.Count() != 0 && operations.Peek().ToString() != "(")
+                        {
+                            operands.Enqueue(operations.Pop());
+                        }
+                        if (operations.Count() != 0)
+                        {
+                            operations.Pop();
+                        }
+                    }
+                }
+            }
+
+            //извлекаем из стека в очередь, если в стеке еще есть операции
+            while (operations.Count() != 0)
+            {
+                operands.Enqueue(operations.Pop());
+            }
+
+            return operands;
+        }
+
+        private int GetPriority(char token)
+        {
+            string symbol = token.ToString();
+
+            if (symbol == "^")
+                return 4;
+            else if (symbol == "*" || symbol == "/")
+                return 3;
+            else if (symbol == "+" || symbol == "-")
+                return 2;
+            else
+                return 1;
+        }
+
+        static bool CheckNumber(string text) //Проверка на число/переменную
+        {
+            if (double.TryParse(text.ToString(), out _) || text == "x")
+                return true;
+            else
+                return false;
+        }
+
+
+        /*здесь я пыталась с проверкой на дробное число и ошибки ввода, но пока не получилось довести до рабочего варианта:(
         private List<object> ParseExpression(string text) //выражение в лист объектов
         {
             text = text.Replace(" ", "");
@@ -37,14 +124,6 @@ namespace NewFunctionBuilder.Logic
             return expression;
         }
 
-        static bool CheckNumber(string text) //Проверка на число/переменную
-        {
-            if (double.TryParse(text.ToString(), out _) || text == "x")
-                return true;
-
-            return false;
-        }
-
         static object ReadNumber(string text, ref int i)
         {
             if (text[i] == 'x')
@@ -64,22 +143,22 @@ namespace NewFunctionBuilder.Logic
 
         static Operations ReadOperation(string text, ref int i)
         {
-            var str = new StringBuilder().Append(text[i]);
+            var str = new StringBuilder();
+            //var str = new StringBuilder().Append(text[i]);
+            bool isAlphabetic = char.IsLetter(text[i]);
 
             while (i < text.Length && !CheckNumber(text[i].ToString()) // не дойдем до конца строки
-                && text[i] != '(' && text[i] != ')') //пока не встретим цифру или скобку
+                && text[i] != '(' && text[i] != ')' //пока не встретим цифру или скобку
+                && ((isAlphabetic && char.IsLetter(text[i]))
+                || (!isAlphabetic && !char.IsLetter(text[i]))))
             {
                 str.Append(text[i++]);
             }
 
-            return ChooseOperation(str.ToString());
-        }
-
-        static public Operations ChooseOperation(string op)
-        {
+            var op = str.ToString();
             Operations operation = null;
 
-            switch (op.ToString())
+            switch (op)
             {
                 case ("+"):
                     operation = new Plus();
@@ -95,83 +174,10 @@ namespace NewFunctionBuilder.Logic
                     break;
                 default:
                     throw new Exception("Неизвестная операция");
-
             }
 
             return operation;
-        }
+        }*/
 
-        private Queue<object> ToRPN(List<object> expression)
-        {
-            var operations = new Stack<object>();
-            //.Push() Вставляет элемент в верх Stack(помещаем в стек)
-            //.Pop() Удаляет элемент из верхней части Stack
-            //.Peek() Возвращает элемент, расположенный в верхней части Stack, но не удаляет его
-            var operands = new Queue<object>();
-            //.Enqueue() Добавляет элемент в конец Queue
-            //.Dequeue() удаляет самый старый элемент из начала Queue
-            //.Peek() Возвращает самый старый элемент, находящийся в начале Queue, но не удаляет его
-
-            for (int i = 0; i < expression.Count; i++)
-            {
-                var token = expression[i];
-
-                if (CheckNumber(token.ToString())) //Если число/переменная, помещаем в очередь
-                {
-                    operands.Enqueue(token);
-                }
-
-                else
-                {
-                    //Если '(', или стек пуст, или символы в нем имеют приоритет < приоритета token, то помещаем token в стек
-                    if (operations.Count() == 0 || token.ToString() == "(" || GetPriority(operations.Peek()) < GetPriority(token))
-                    {
-                        operations.Push(token);
-                    }
-
-                    //Если приоритет token <= приоритета символа на вершине стека,
-                    //то извлекаем символы из стека в очередь, пока выполняется условие и помещаем token в стек
-                    else if (token.ToString() != ")")
-                    {
-                        while (operations.Count() != 0 && GetPriority(token) <= GetPriority(operations.Peek()))
-                        {
-                            operands.Enqueue(operations.Pop());
-                        }
-                        operations.Push(token);
-                    }
-
-                    //Если ')', то извлекаем символы из стека в очередь,
-                    //пока не встретим в стеке '(', которую уничтожаем, как и ')'
-                    else
-                    {
-                        while (operations.Peek().ToString() != "(")
-                        {
-                            operands.Enqueue(operations.Pop());
-                        }
-                        operations.Pop();
-                    }
-                }  
-            }
-
-            //if вся строка разобрана, а в стеке есть операции, извлекаем их из стека в очередь
-            while (operations.Count() != 0)
-            {
-                operands.Enqueue(operations.Pop());
-            }
-
-            return operands;
-        }
-
-        private int GetPriority(object token)
-        {
-            string symbol = token.ToString();
-
-            if (symbol == "*" || symbol == "/")
-                return 3;
-            else if (symbol == "+" || symbol == " - ")
-                return 2;
-            else
-                return 1;
-        }
     }
 }

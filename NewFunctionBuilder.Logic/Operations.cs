@@ -9,23 +9,8 @@ namespace NewFunctionBuilder.Logic
         public abstract int Priority { get; } //приоритет операции
         public abstract int OperandCount { get; } //кол-во операндов
 
-        public abstract double Evaluate(List<object> values);
+        public abstract double Evaluate(double[] arguments);
     }
-
-    /*public class Parenthessis //скобки
-    {
-        public bool IsOpening { get; }
-
-        public Parenthessis(char parenthesis)
-        {
-            IsOpening = parenthesis == '(';
-        }
-
-        public override string ToString()
-        {
-            return IsOpening ? "(" : ")";
-        }
-    }*/
 
     public class Plus : Operations
     {
@@ -33,11 +18,9 @@ namespace NewFunctionBuilder.Logic
         public override int Priority => 2;
         public override int OperandCount => 2;
 
-        public override double Evaluate(List<object> values) //оценка
+        public override double Evaluate(double[] arguments) //оценка
         {
-            if (values.Count != 2)
-                throw new ArgumentException("Неверное количество аргументов.");
-            return (double)values[0] + (double)values[1];
+            return (double)arguments[0] + (double)arguments[1];
         }
     }
 
@@ -47,11 +30,9 @@ namespace NewFunctionBuilder.Logic
         public override int Priority => 2;
         public override int OperandCount => 2;
 
-        public override double Evaluate(List<object> values)
+        public override double Evaluate(double[] arguments)
         {
-            if (values.Count != 2)
-                throw new ArgumentException("Неверное количество аргументов.");
-            return (double)values[0] - (double)values[1];
+            return (double)arguments[0] - (double)arguments[1];
         }
     }
 
@@ -61,11 +42,9 @@ namespace NewFunctionBuilder.Logic
         public override int Priority => 3;
         public override int OperandCount => 2;
 
-        public override double Evaluate(List<object> values)
+        public override double Evaluate(double[] arguments)
         {
-            if (values.Count != 2)
-                throw new ArgumentException("Неверное количество аргументов.");
-            return (double)values[0] * (double)values[1];
+            return (double)arguments[0] * (double)arguments[1];
         }
     }
 
@@ -75,11 +54,9 @@ namespace NewFunctionBuilder.Logic
         public override int Priority => 3;
         public override int OperandCount => 2;
 
-        public override double Evaluate(List<object> values)
+        public override double Evaluate(double[] arguments)
         {
-            if (values.Count != 2)
-                throw new ArgumentException("Неверное количество аргументов.");
-            return (double)values[0] / (double)values[1];
+            return (double)arguments[0] / (double)arguments[1];
         }
     }
 }

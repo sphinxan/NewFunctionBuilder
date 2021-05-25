@@ -1,18 +1,19 @@
-﻿//using NewFunctionBuilder.Logic;
-
-
+﻿
 namespace NewFunctionBuilder.Console
 {
+    using NewFunctionBuilder.Logic;
     using System;
-    //using NewFunctionBuilder.Logic; 
 
     class Program
     {
         static void Main(string[] args)
         {
-            string text = "(1/2+0.5)+2*(4-1/2)";
-            //Console.WriteLine(text.Parse());
-            Console.WriteLine("Hello World!");
+            string text = "4 * (6 - 2) + 5";
+            var rpn = new RPN();
+            var calc = new Calculate();
+            var elements = rpn.Parse(text);
+
+            Console.WriteLine(calc.ToCalculate(elements));
         }
     }
 }
