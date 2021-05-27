@@ -9,11 +9,7 @@ namespace NewFunctionBuilder.Console
         static void Main(string[] args)
         {
             string text = "4 * (6 - 2) + 5";
-            var rpn = new RPN();
-            var calc = new Calculate();
-            var elements = rpn.Parse(text);
-
-            Console.WriteLine(calc.ToCalculate(elements));
+            Console.WriteLine(new Calculate().ToCalculate(new RPN().Parse(text)));
         }
     }
 }
