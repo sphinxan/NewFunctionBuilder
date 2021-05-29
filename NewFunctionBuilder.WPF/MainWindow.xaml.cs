@@ -2,10 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using NewFunctionBuilder.Logic;
+
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+
 
 namespace NewFunctionBuilder.WPF
 {
@@ -18,35 +27,40 @@ namespace NewFunctionBuilder.WPF
         {
             InitializeComponent(); //вызывает код XAML
 
-            /*eva
-            Drawer.MainWindow = this;
-            Drawer.GraphCanvas = (Canvas)FindName("Canvas");
-            Drawer.SetControls();*/
+            WpfDrawer.MainWindow = this;
+            WpfDrawer.Canvas = (Canvas)FindName("Сanvas");
+            WpfDrawer.SetControls();
         }
 
-        private void btnCalculate_Click(object sender, RoutedEventArgs e)
+        private void BtnCalculate_Click(object sender, RoutedEventArgs e)
         {
             string expression = tbExpression.Text;
+            double xMin = double.Parse(tbXMin.Text);
+            double xMax = double.Parse(tbXMax.Text);
+            double step = double.Parse(tbStep.Text);
 
-            var rpn = new RPN().Parse(expression);
+            Calculate function = new Calculate(expression, xMin, xMax, step);
 
-            //Visibility свойство устанавливает параметры видимости элемента(сначала Collapsed - не виден и не участвует в компоновке)
-            //Visible - элемент виден и участвует в компоновке
             spRPN.Visibility = Visibility.Visible;
-            tbRPN.Text = "  " + new string(new RPN().Parse(expression));
+            string rpnString = function.RpnStr(expression);
+            tbRPN.Text = "  " + new string(rpnString);
 
             spResult.Visibility = Visibility.Visible;
-            tbResult.Text = "  " + new Calculate().ToCalculate(rpn).ToString();
+            tbResult.Text = "  " + function.FunctionValues().First().Value.ToString();
+            tbYCoord.Text = function.FunctionValues().First().Value.ToString();
 
+            WpfDrawer.DrawAxes();
+            btnTable.Visibility = Visibility.Visible;
 
-            //eva
-            /*
-             if (RPN.IsExpressionCorrectly(((TextBox) FindName("tbFunction")).Text)) 
-            {
-                Drawer.SetFunction(((TextBox)FindName("tbFunction")).Text);
-                Drawer.DrawField();
-            }
-             */
+            WpfDrawer.DrawFunction();
+
+            Dictionary<double, double> functionValues = function.FunctionValues();
+            gValues.ItemsSource = functionValues.Select(x => new Values { X = x.Key, Y = x.Value }).ToList();
+        }
+
+        private void BtnTable_Click(object sender, RoutedEventArgs e)
+        {
+            gValues.Visibility = Visibility.Visible;
         }
     }
 }

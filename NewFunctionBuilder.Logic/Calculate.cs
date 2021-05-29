@@ -2,64 +2,103 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using System.Text;
-
 namespace NewFunctionBuilder.Logic
 {
     public class Calculate
     {
-        readonly char[] Symbols = new char[] { '+', '-', '*', '/', '^' };
+        private char[] rpnParse;
+        private bool argument;
+        private double xMin, xMax, step;
 
-        public double ToCalculate(char[] elements)
+        readonly char[] Symbols = new char[] { '+', 'x', '-', '*', '/', '^' };
+        
+        public Calculate(string expression, double xMin = double.NaN, double xMax = double.NaN, double step = double.NaN)
         {
-            var answer = new Stack<double>();
+            this.xMin = xMin;
+            this.xMax = xMax;
+            this.step = step;
 
-            foreach (var item in elements)
+            rpnParse = RPN.Parse(expression);
+                            
+            argument = rpnParse.Any(x => x != ' '); //Проверка на существование хотя бы одного элемента в последовательности
+        }
+
+        public string RpnStr(string expression)
+        {
+
+            char[] functionList = RPN.Parse(expression).ToArray();
+            string str = "";
+            for (var i = 0; i < functionList.Length; i++)
+            {
+                str += functionList[i];
+            }
+
+            return str;
+        }
+
+        public Dictionary<double, double> FunctionValues()
+        {
+            Dictionary<double, double> result = new Dictionary<double, double>();
+
+            double element = xMin;
+            do
+            {
+                result.Add(element, ToCalculate(element));
+                element += step;
+            }
+            while (argument && (xMax - element) >= 0);
+
+            return result;
+        }
+
+        public double ToCalculate(double element)
+        {
+            var Answer = new Stack<double>();
+
+            foreach (var item in rpnParse)
             {
                 //если число, кладем в стек
                 if (!Symbols.Contains(item))
                 {
-                    answer.Push(double.Parse(item.ToString()));
+                    Answer.Push(double.Parse(item.ToString()));
                 }
 
-                /*else if (item.ToString() == "x")
-                { }*/
+                else if (item.ToString() == "x")
+                {
+                    Answer.Push(element);
+                }
 
                 //если операция
                 else
                 {
-                    //извлекаем из стека числа 2 раза
-                    //(кол-во аргументов у операции в моем случае пока что всегда 2)
-                    var arguments = new double[2];
-                    for (int i = 2; i > 0; i--)
-                    {
-                        //числа в стеке лежат в обратном порядке, разворачиваем их
-                        arguments[i - 1] = answer.Pop();
-                    }
-                    var operationResult = DoOperation(item, arguments);
-                    //результат кладем в стек
-                    answer.Push(operationResult);
+                    //извлекаем из стека 2 числа, результат кладем в стек
+                    var operationResult = DoOperation(item, Answer.Pop(), Answer.Pop());
+                    Answer.Push(operationResult);
                 }
             }
             //последнее число в стеке - ответ
-            return answer.Pop();
+            return Answer.Pop();
         }
 
-        private double DoOperation(char op, double[] arguments)
+        private double DoOperation(char op, double firstArg, double secondArg)
         {
-            //(double)arguments[0] + (double)arguments[1];
             switch (op)
             {
                 case '+':
-                    return arguments[0] + arguments[1];
+                    return secondArg + firstArg;
                 case '-':
-                    return arguments[0] - arguments[1];
+                    return secondArg - firstArg;
                 case '*':
-                    return arguments[0] * arguments[1];
+                    return secondArg * firstArg;
                 case '/':
-                    return arguments[0] / arguments[1];
+                    {
+                        if (firstArg != 0.0)
+                            return secondArg / firstArg;
+                        else
+                            throw new Exception("Ошибка. Деление на ноль");
+                    }
                 case '^':
-                    return Math.Pow(arguments[0], arguments[1]);
+                    return Math.Pow(secondArg, firstArg);
                 default:
                     throw new Exception("Такого оператора нет");
             }

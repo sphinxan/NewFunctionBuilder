@@ -22,19 +22,21 @@
 
                 <DockPanel DockPanel.Dock="Left" Background="Gray">
                     <Label HorizontalContentAlignment="Center" Width="56">y = f(x) =</Label>
-                    <TextBox Name="tbExpression" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightBlue">2+2/1</TextBox>
+                    <TextBox Name="tbExpression" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightBlue">2*x+2/1</TextBox>
                 </DockPanel>
 
                 <TextBlock Background="White" Height="5"></TextBlock>
 
                 <DockPanel DockPanel.Dock="Left">
-                    <UniformGrid Grid.Row="0" Columns="6">
-                        <TextBlock TextAlignment="Center" Background="Gray">x =</TextBlock>
-                        <TextBox Name="tbXCoord" HorizontalContentAlignment="Center" Background="LightBlue">0</TextBox>
+                    <UniformGrid Grid.Row="0" Columns="8">
+                        <TextBlock TextAlignment="Center" Background="Gray">xMin =</TextBlock>
+                        <TextBox Name="tbXMin" HorizontalContentAlignment="Center" Background="LightBlue">1</TextBox>
+                        <TextBlock TextAlignment="Center" Background="Gray">xMax =</TextBlock>
+                        <TextBox Name="tbXMax" HorizontalContentAlignment="Center" Background="LightBlue">7</TextBox>
                         <TextBlock TextAlignment="Center" Background="Gray">y =</TextBlock>
                         <TextBox Name="tbYCoord" HorizontalContentAlignment="Center" Background="LightBlue">0</TextBox>
                         <TextBlock TextAlignment="Center" Background="Gray">step =</TextBlock>
-                        <TextBox Name="tbStep" HorizontalContentAlignment="Center" Background="LightBlue">0</TextBox>
+                        <TextBox Name="tbStep" HorizontalContentAlignment="Center" Background="LightBlue">2</TextBox>
                     </UniformGrid>
                 </DockPanel>
             </StackPanel>
@@ -44,9 +46,16 @@
             <StackPanel>
 
                 <Border BorderBrush="Black" BorderThickness="1">
-                    <Button x:Name="btnCalculate" HorizontalAlignment="Center" BorderThickness="2" Margin="6" FontWeight="Bold"
-                    Width="108" Height="27" Click="btnCalculate_Click">Вычислить
-                    </Button>
+                    <UniformGrid Columns="3">
+                        <TextBlock/>
+                        <Button x:Name="tnCalculate" HorizontalAlignment="Center" BorderThickness="2" Margin="6" FontWeight="Bold"
+                            Width="108" Height="27" Click="BtnCalculate_Click">Вычислить
+                        </Button>
+
+                        <Button x:Name="btnTable" HorizontalAlignment="Right"  BorderThickness="2"  Margin="6" FontWeight="Bold" 
+                                Width="120" Height="20" Click="BtnTable_Click" Visibility="Collapsed">Таблица Значений
+                        </Button>
+                    </UniformGrid>
                 </Border>
 
                 <Border BorderBrush="Black" BorderThickness="0.5">
@@ -69,17 +78,15 @@
             </StackPanel>
         </DockPanel>
 
-        <Border BorderBrush="Black" BorderThickness="1" Margin="5" Grid.Row="2">
-            <DockPanel Name="dpCanvas" VerticalAlignment="Stretch">
-                <Canvas Name="canvas" SizeChanged="canvas_SizeChanged"/>
-                <!--<DataGrid
-                    Name="gValues"
-                    Visibility="Collapsed"
-                    AutoGenerateColumns="True" >
-                    ItemsSource="{DynamicResource ResourceKey=phones}">
-                    ItemsSource Указывает на коллекцию, содержащую все объекты, которые будут показаны в списке
-            </DataGrid>-->
+        <DockPanel Name="dpCanvas" VerticalAlignment="Stretch"  Grid.Row="2">
+            <DataGrid Name="gValues" Visibility="Collapsed" AutoGenerateColumns="True"
+                ItemsSource="{DynamicResource ResourceKey=phones}">
+                <!--ItemsSource Указывает на коллекцию, содержащую все объекты, которые будут показаны в списке-->
+            </DataGrid>
+            
+            <Border BorderBrush="Black" BorderThickness="2" Margin="5">
+                <Canvas Name="Сanvas"/>
+            </Border>
         </DockPanel>
-        </Border>
     </Grid>
 </Window>
