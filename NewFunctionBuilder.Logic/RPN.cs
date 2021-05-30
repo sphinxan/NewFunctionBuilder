@@ -5,7 +5,7 @@ namespace NewFunctionBuilder.Logic
 {
     public class RPN
     {
-        public static readonly char[] elements;
+        //public static readonly char[] elements;
 
         public static char[] Parse(string text)                                                         //Stack.Push() Вставляет элемент в верх Stack(помещаем в стек)
         {                                                                                               //Stack.Pop() Удаляет элемент из верхней части Stack

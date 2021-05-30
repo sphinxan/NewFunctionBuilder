@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using NewFunctionBuilder.Logic;
-
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 
 
 namespace NewFunctionBuilder.WPF
@@ -28,7 +17,7 @@ namespace NewFunctionBuilder.WPF
             InitializeComponent(); //вызывает код XAML
 
             WpfDrawer.MainWindow = this;
-            WpfDrawer.Canvas = (Canvas)FindName("Сanvas");
+            WpfDrawer.MyCanvas = (Canvas)FindName("Сanvas");
             WpfDrawer.SetControls();
         }
 
@@ -49,13 +38,12 @@ namespace NewFunctionBuilder.WPF
             tbResult.Text = "  " + function.FunctionValues().First().Value.ToString();
             tbYCoord.Text = function.FunctionValues().First().Value.ToString();
 
-            WpfDrawer.DrawAxes();
             btnTable.Visibility = Visibility.Visible;
-
-            WpfDrawer.DrawFunction();
 
             Dictionary<double, double> functionValues = function.FunctionValues();
             gValues.ItemsSource = functionValues.Select(x => new Values { X = x.Key, Y = x.Value }).ToList();
+
+            new WpfDrawer((Canvas)FindName("Сanvas"), functionValues);
         }
 
         private void BtnTable_Click(object sender, RoutedEventArgs e)

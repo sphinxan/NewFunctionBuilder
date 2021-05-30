@@ -32,7 +32,7 @@
                         <TextBlock TextAlignment="Center" Background="Gray">xMin =</TextBlock>
                         <TextBox Name="tbXMin" HorizontalContentAlignment="Center" Background="LightBlue">1</TextBox>
                         <TextBlock TextAlignment="Center" Background="Gray">xMax =</TextBlock>
-                        <TextBox Name="tbXMax" HorizontalContentAlignment="Center" Background="LightBlue">7</TextBox>
+                        <TextBox Name="tbXMax" HorizontalContentAlignment="Center" Background="LightBlue">21</TextBox>
                         <TextBlock TextAlignment="Center" Background="Gray">y =</TextBlock>
                         <TextBox Name="tbYCoord" HorizontalContentAlignment="Center" Background="LightBlue">0</TextBox>
                         <TextBlock TextAlignment="Center" Background="Gray">step =</TextBlock>
@@ -44,11 +44,10 @@
 
         <DockPanel Grid.Row="1" Background="LightBlue" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <StackPanel>
-
                 <Border BorderBrush="Black" BorderThickness="1">
                     <UniformGrid Columns="3">
                         <TextBlock/>
-                        <Button x:Name="tnCalculate" HorizontalAlignment="Center" BorderThickness="2" Margin="6" FontWeight="Bold"
+                        <Button x:Name="btnCalculate" HorizontalAlignment="Center" BorderThickness="2" Margin="6" FontWeight="Bold"
                             Width="108" Height="27" Click="BtnCalculate_Click">Вычислить
                         </Button>
 
@@ -78,7 +77,7 @@
             </StackPanel>
         </DockPanel>
 
-        <DockPanel Name="dpCanvas" VerticalAlignment="Stretch"  Grid.Row="2">
+        <DockPanel Name="dpCanvas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="2">
             <DataGrid Name="gValues" Visibility="Collapsed" AutoGenerateColumns="True"
                 ItemsSource="{DynamicResource ResourceKey=phones}">
                 <!--ItemsSource Указывает на коллекцию, содержащую все объекты, которые будут показаны в списке-->

@@ -12,7 +12,7 @@ namespace NewFunctionBuilder.Logic
 
         readonly char[] Symbols = new char[] { '+', 'x', '-', '*', '/', '^' };
         
-        public Calculate(string expression, double xMin = double.NaN, double xMax = double.NaN, double step = double.NaN)
+        public Calculate(string expression, double xMin, double xMax, double step)
         {
             this.xMin = xMin;
             this.xMax = xMax;
@@ -25,7 +25,6 @@ namespace NewFunctionBuilder.Logic
 
         public string RpnStr(string expression)
         {
-
             char[] functionList = RPN.Parse(expression).ToArray();
             string str = "";
             for (var i = 0; i < functionList.Length; i++)

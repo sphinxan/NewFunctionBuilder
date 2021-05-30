@@ -1,51 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows;
-using NewFunctionBuilder.Logic;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Linq;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-
-
 
 namespace NewFunctionBuilder.WPF
 {
     public class WpfDrawer
     {
-
-        public static Canvas Canvas { get; set; }
+        public static Canvas MyCanvas { get; set; }
         public static MainWindow MainWindow { get; set; }
+        public static Dictionary<double, double> DrawGraph = new Dictionary<double, double>();
 
-        public static void SetControls() //событие
+        public WpfDrawer(Canvas myCanvas, Dictionary<double, double> drawFunction)
         {
-            Canvas.SizeChanged += Canvas_SizeChanged; ;
+            MyCanvas = myCanvas;
+            DrawGraph = drawFunction;
+        }
+
+        public static void SetControls()
+        {
+            MyCanvas.SizeChanged += Canvas_SizeChanged;
         }
 
         private static void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             DrawAxes();
-            DrawFunction();
+            DrawFunction(DrawGraph);
         }
 
         public static void DrawAxes()
         {
-            Canvas.Children.Clear();
+            var Height = MyCanvas.ActualHeight;
+            var Width = MyCanvas.ActualWidth;
 
-            double height = Canvas.ActualHeight; //высота
-            double width = Canvas.ActualWidth; //ширина
+            MyCanvas.Children.Clear();
 
-            Canvas.Children.Add(DrawAxis(0, width, height / 2, height / 2)); //ox
-            Canvas.Children.Add(DrawArrows(width - 10, width, width - 10, height / 2 - 5, height / 2, height / 2 + 5)); // >
+            MyCanvas.Children.Add(DrawAxis(0, Width, Height / 2, Height / 2)); //ox
+            MyCanvas.Children.Add(DrawArrows(Width - 10, Width, Width - 10, Height / 2 - 5, Height / 2, Height / 2 + 5)); // >
 
-            Canvas.Children.Add(DrawAxis(width / 2, width / 2, 0, height)); //oy
-            Canvas.Children.Add(DrawArrows(width / 2 - 5, width / 2, width / 2 + 5, 10, 0, 10)); // ^
+            MyCanvas.Children.Add(DrawAxis(Width / 2, Width / 2, 0, Height)); //oy
+            MyCanvas.Children.Add(DrawArrows(Width / 2 - 5, Width / 2, Width / 2 + 5, 10, 0, 10)); // ^
         }
 
         public static Line DrawAxis(double x1, double x2, double y1, double y2)
@@ -74,16 +69,28 @@ namespace NewFunctionBuilder.WPF
             return arrow;
         }
 
-        public static void DrawFunction()
+        public static void DrawFunction(Dictionary<double, double> DrawGraph)
         {
-            //double minX = -Canvas.ActualWidth / 2 - 1;
-            //double maxX = Canvas.ActualWidth / 2 + 1;
+            var Height = MyCanvas.ActualHeight;
+            var Width = MyCanvas.ActualWidth;
 
-            //double minY = -Canvas.ActualHeight / 2 - 1;
-            //double maxY = Canvas.ActualHeight / 2 + 1;
+            var function = new Polyline
+            {
+                Stroke = Brushes.Blue,
+                StrokeThickness = 2,
+            };
 
-            //TextBox expression = (TextBox)MainWindow.FindName("tbExpression").ToString();
+            foreach (var i in DrawGraph.Keys)
+            {
+                var point = new Point
+                {
+                    X = Width / 2 + i * Step.ValueStep,
+                    Y = Height / 2 - DrawGraph[i] * Step.ValueStep,
+                };
+                function.Points.Add(point);
+            }
+
+            MyCanvas.Children.Add(function);
         }
-
     }
 }
