@@ -3,17 +3,18 @@ namespace NewFunctionBuilder.Console
 {
     using NewFunctionBuilder.Logic;
     using System;
+    using System.Linq;
+
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
+
 
     class Program
     {
         static void Main(string[] args)
         {
-            string text = "4 * (6 - 2) + 5";
-            var rpn = new RPN();
-            var calc = new Calculate();
-            var elements = rpn.Parse(text);
 
-            Console.WriteLine(calc.ToCalculate(elements));
         }
     }
 }

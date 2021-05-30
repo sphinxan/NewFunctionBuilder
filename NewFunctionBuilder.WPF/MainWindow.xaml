@@ -1,0 +1,91 @@
+﻿<Window x:Class="NewFunctionBuilder.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NewFunctionBuilder.WPF"
+        mc:Ignorable="d"
+        Title="" Height="500" Width="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <!--DockPanel используется для привязки элементов к краям контейнера
+        DockPanel для настройки общей структуры пользовательского интерфейса приложения
+        StackPanel размещает содержимое-->
+        <DockPanel  Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10">
+            <StackPanel>
+                <TextBlock Background="Green" TextAlignment="Center">Bычисление ОПЗ</TextBlock>
+
+                <DockPanel DockPanel.Dock="Left" Background="Gray">
+                    <Label HorizontalContentAlignment="Center" Width="56">y = f(x) =</Label>
+                    <TextBox Name="tbExpression" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightBlue">2*x+2/1</TextBox>
+                </DockPanel>
+
+                <TextBlock Background="White" Height="5"></TextBlock>
+
+                <DockPanel DockPanel.Dock="Left">
+                    <UniformGrid Grid.Row="0" Columns="8">
+                        <TextBlock TextAlignment="Center" Background="Gray">xMin =</TextBlock>
+                        <TextBox Name="tbXMin" HorizontalContentAlignment="Center" Background="LightBlue">1</TextBox>
+                        <TextBlock TextAlignment="Center" Background="Gray">xMax =</TextBlock>
+                        <TextBox Name="tbXMax" HorizontalContentAlignment="Center" Background="LightBlue">21</TextBox>
+                        <TextBlock TextAlignment="Center" Background="Gray">y =</TextBlock>
+                        <TextBox Name="tbYCoord" HorizontalContentAlignment="Center" Background="LightBlue">0</TextBox>
+                        <TextBlock TextAlignment="Center" Background="Gray">step =</TextBlock>
+                        <TextBox Name="tbStep" HorizontalContentAlignment="Center" Background="LightBlue">2</TextBox>
+                    </UniformGrid>
+                </DockPanel>
+            </StackPanel>
+        </DockPanel>
+
+        <DockPanel Grid.Row="1" Background="LightBlue" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <StackPanel>
+                <Border BorderBrush="Black" BorderThickness="1">
+                    <UniformGrid Columns="3">
+                        <TextBlock/>
+                        <Button x:Name="btnCalculate" HorizontalAlignment="Center" BorderThickness="2" Margin="6" FontWeight="Bold"
+                            Width="108" Height="27" Click="BtnCalculate_Click">Вычислить
+                        </Button>
+
+                        <Button x:Name="btnTable" HorizontalAlignment="Right"  BorderThickness="2"  Margin="6" FontWeight="Bold" 
+                                Width="120" Height="20" Click="BtnTable_Click" Visibility="Collapsed">Таблица Значений
+                        </Button>
+                    </UniformGrid>
+                </Border>
+
+                <Border BorderBrush="Black" BorderThickness="0.5">
+                    <DockPanel Background="LightBlue" HorizontalAlignment="Center">
+                        <StackPanel Name="spRPN" Orientation="Horizontal" Visibility="Collapsed">
+                            <TextBlock>ОПЗ:</TextBlock>
+                            <TextBlock Name="tbRPN"></TextBlock>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <Border BorderBrush="Black" BorderThickness="1">
+                    <DockPanel Background="LightBlue" HorizontalAlignment="Center">
+                        <StackPanel Name="spResult" Orientation="Horizontal" Visibility="Collapsed">
+                            <TextBlock>Ответ:</TextBlock>
+                            <TextBlock Name="tbResult"></TextBlock>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+            </StackPanel>
+        </DockPanel>
+
+        <DockPanel Name="dpCanvas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="2">
+            <DataGrid Name="gValues" Visibility="Collapsed" AutoGenerateColumns="True"
+                ItemsSource="{DynamicResource ResourceKey=phones}">
+                <!--ItemsSource Указывает на коллекцию, содержащую все объекты, которые будут показаны в списке-->
+            </DataGrid>
+            
+            <Border BorderBrush="Black" BorderThickness="2" Margin="5">
+                <Canvas Name="Сanvas"/>
+            </Border>
+        </DockPanel>
+    </Grid>
+</Window>
