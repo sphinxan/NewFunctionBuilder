@@ -22,7 +22,7 @@
 
                 <DockPanel DockPanel.Dock="Left" Background="Gray">
                     <Label HorizontalContentAlignment="Center" Width="56">y = f(x) =</Label>
-                    <TextBox Name="tbExpression" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightBlue">2*x+2/1</TextBox>
+                    <TextBox Name="tbExpression" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightBlue">x*2+6/3</TextBox>
                 </DockPanel>
 
                 <TextBlock Background="White" Height="5"></TextBlock>
@@ -30,9 +30,9 @@
                 <DockPanel DockPanel.Dock="Left">
                     <UniformGrid Grid.Row="0" Columns="8">
                         <TextBlock TextAlignment="Center" Background="Gray">xMin =</TextBlock>
-                        <TextBox Name="tbXMin" HorizontalContentAlignment="Center" Background="LightBlue">1</TextBox>
+                        <TextBox Name="tbXMin" HorizontalContentAlignment="Center" Background="LightBlue">-33</TextBox>
                         <TextBlock TextAlignment="Center" Background="Gray">xMax =</TextBlock>
-                        <TextBox Name="tbXMax" HorizontalContentAlignment="Center" Background="LightBlue">21</TextBox>
+                        <TextBox Name="tbXMax" HorizontalContentAlignment="Center" Background="LightBlue">33</TextBox>
                         <TextBlock TextAlignment="Center" Background="Gray">y =</TextBlock>
                         <TextBox Name="tbYCoord" HorizontalContentAlignment="Center" Background="LightBlue">0</TextBox>
                         <TextBlock TextAlignment="Center" Background="Gray">step =</TextBlock>

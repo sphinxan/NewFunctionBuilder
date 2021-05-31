@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -26,7 +28,6 @@ namespace NewFunctionBuilder.WPF
         private static void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             DrawAxes();
-            DrawFunction(DrawGraph);
         }
 
         public static void DrawAxes()
@@ -41,6 +42,8 @@ namespace NewFunctionBuilder.WPF
 
             MyCanvas.Children.Add(DrawAxis(Width / 2, Width / 2, 0, Height)); //oy
             MyCanvas.Children.Add(DrawArrows(Width / 2 - 5, Width / 2, Width / 2 + 5, 10, 0, 10)); // ^
+
+            DrawFunction(DrawGraph);
         }
 
         public static Line DrawAxis(double x1, double x2, double y1, double y2)
