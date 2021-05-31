@@ -16,7 +16,6 @@ namespace NewFunctionBuilder.WPF
         {
             InitializeComponent(); //вызывает код XAML
 
-            WpfDrawer.MainWindow = this;
             WpfDrawer.MyCanvas = (Canvas)FindName("Сanvas");
             WpfDrawer.SetControls();
         }
@@ -44,6 +43,8 @@ namespace NewFunctionBuilder.WPF
             gValues.ItemsSource = functionValues.Select(x => new Values { X = x.Key, Y = x.Value }).ToList();
 
             new WpfDrawer((Canvas)FindName("Сanvas"), functionValues);
+
+            WpfDrawer.DrawAxes();
         }
 
         private void BtnTable_Click(object sender, RoutedEventArgs e)
